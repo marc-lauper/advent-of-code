@@ -1,4 +1,4 @@
-# Day 1 - Gear Ratios
+# Day 3 - Gear Ratios
 See https://adventofcode.com/2023/day/3
 
 ```python

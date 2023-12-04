@@ -1,4 +1,4 @@
-# Day 1 - Cube Conondrum
+# Day 2 - Cube Conondrum
 See https://adventofcode.com/2023/day/2
 
 ```python
