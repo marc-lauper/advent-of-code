@@ -1,4 +1,4 @@
-# Day 7 - Haunted Wasteland
+# Day 8 - Haunted Wasteland
 See https://adventofcode.com/2023/day/8
 
 ## Part 1
