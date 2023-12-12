@@ -64,4 +64,68 @@ print("result: " + str(result) + " solutions found")
 ```
 
 ## Part 2
-Still working on it. Can't just loop over part 1, that would literally take ages...
+```python
+from functools import cache
+
+INCREASE = 5
+
+OPERATIONAL = '.'
+DAMAGED = '#'
+UNKNOWN = '?'
+
+@cache
+def find_solutions(springs, checksums, damaged_count = 0):
+    
+    # End of the recursion when there are no more springs to inspect...
+    if(len(springs) == 0):
+        checksum_length = len(checksums)
+        if(checksum_length == 0):
+            return 1 if damaged_count == 0 else 0
+        elif(checksum_length == 1):
+            return 1 if damaged_count == checksums[0] else 0
+        else:
+            return 0
+    
+    spring = springs[0]
+    new_springs = springs[1:]
+    
+    if(spring == UNKNOWN):
+        return find_solutions('#' + new_springs, checksums, damaged_count) + find_solutions('.' + new_springs, checksums, damaged_count)
+
+    checksum = 0 if len(checksums) == 0 else checksums[0]
+
+    if(damaged_count > checksum):
+        return 0
+    
+    if(spring == DAMAGED):
+        return find_solutions(new_springs, checksums, damaged_count + 1)
+
+    if(spring == OPERATIONAL):
+        if(damaged_count == 0):
+            return find_solutions(new_springs, checksums, 0)
+        elif(damaged_count == checksum):
+            return find_solutions(new_springs, checksums[1:], 0)
+        else:
+            return 0
+
+result = 0
+with open('aoc12.txt', 'r') as file:
+    for line in file:
+        line = line.replace('\n', '')
+        print ("Processing line " + line)
+        line = line.split(' ')
+        springs = line[0]
+        checksums = line[1]
+        for i in range(INCREASE-1):
+            springs += UNKNOWN + line[0]
+            checksums += "," + line[1]
+        damaged_springs_checksums = tuple(map(int,checksums.split(',')))
+        
+        to_add = find_solutions(springs, damaged_springs_checksums)
+        print("Found " + str(to_add) + " solutions")
+        result += to_add
+        print("")
+        
+print("result: " + str(result) + " solutions found")
+
+```
