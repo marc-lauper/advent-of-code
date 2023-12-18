@@ -2,11 +2,14 @@
 # Day 18 - Lavaduct Lagoon
 See https://adventofcode.com/2023/day/18
 
-## Part 1
 ```python
 import string
 
 VERBOSE = False
+PART_1 = False
+
+DIRECTIONS_PART2 = ['R', 'D', 'L', 'U']
+
 class Vertex:
     def __init__(self, x, y):
         self.x = x
@@ -44,9 +47,14 @@ with open('aoc18.txt', 'r') as file:
             continue
 
         tokens = line.split(' ')
-        direction= tokens[0]
-        distance = int(tokens[1])
-        color = tokens[2] # We don't care about it, for now
+        if PART_1:
+            direction= tokens[0]
+            distance = int(tokens[1])
+        else:
+            color = tokens[2][2:-1]
+            direction = DIRECTIONS_PART2[int(color[-1])]
+            distance = int(color[:-1], 16)
+
         print_verbose(f"Direction: {direction}, Distance: {distance}, Color: {color}")
         
         if(direction == 'R'):
