@@ -17,6 +17,7 @@ EAST = 1
 SOUTH = 2
 WEST = 3
 WALL = '#'
+OPTIMAL_PATH = '0'
 
 PRICE_TO_MOVE = 1
 PRICE_TO_TURN = 1000
@@ -117,8 +118,12 @@ def fill_maze(position, facing):
             prices[next_position[0]][next_position[1]][next_direction] = new_price_for_next_position
             fill_maze(next_position, next_direction)
 
-def invert_direction(direction):
-    return (direction + 2) % 4
+def smallest_of(array_with_int_and_none):
+    smallest = sys.maxsize
+    for i in range(len(array_with_int_and_none)):
+        if array_with_int_and_none[i] != None and array_with_int_and_none[i] < smallest:
+            smallest = array_with_int_and_none[i]
+    return smallest
 
 def index_of_smallest(array_with_int_and_none):
     smallest = sys.maxsize
@@ -129,12 +134,42 @@ def index_of_smallest(array_with_int_and_none):
             index = i
     return index
 
-def smallest_of(array_with_int_and_none):
-    smallest = sys.maxsize
-    for i in range(len(array_with_int_and_none)):
-        if array_with_int_and_none[i] != None and array_with_int_and_none[i] < smallest:
-            smallest = array_with_int_and_none[i]
-    return smallest
+def invert_direction(direction):
+    return (direction + 2) % 4
+
+def fill_optimal_path(current_position = None, current_price = None, current_direction = None):
+    global mage
+    global prices
+    global end
+    
+    if current_position == None:
+        current_position = end
+        current_price = smallest_of(prices[end[0]][end[1]])+1
+        current_direction = index_of_smallest(prices[end[0]][end[1]])
+        maze[end[0]][end[1]] = OPTIMAL_PATH
+        maze[start[0]][start[1]] = OPTIMAL_PATH
+    
+    for incoming_direction in [NORTH, EAST, SOUTH, WEST]:
+        next_price = prices[current_position[0]][current_position[1]][incoming_direction]
+        if next_price == None:
+            continue
+        compare_price = next_price
+        if incoming_direction != current_direction:
+            compare_price += PRICE_TO_TURN
+        if compare_price < current_price:
+            next_position = get_next_position(current_position, invert_direction(incoming_direction))
+            if maze[next_position[0]][next_position[1]] != OPTIMAL_PATH:
+                maze[next_position[0]][next_position[1]] = OPTIMAL_PATH
+                fill_optimal_path(next_position, next_price, incoming_direction)
+
+def count_optimal_path():
+    global maze
+    count = 0
+    for y in range(y_limit):
+        for x in range(x_limit):
+            if maze[y][x] == OPTIMAL_PATH:
+                count += 1
+    return count
 
 with open(os.path.dirname(os.path.abspath(__file__)) + '/input.txt', 'r') as file:
     result = 0
@@ -161,12 +196,15 @@ with open(os.path.dirname(os.path.abspath(__file__)) + '/input.txt', 'r') as fil
     print_debug(f"start: {start}")
     print_debug(f"end: {end}")
     print_debug("")
-    # print_grid()
-    
     
     fill_maze(start, EAST)
     print_grid()
     possible_results = prices[end[0]][end[1]]
     result = smallest_of(possible_results)
+    print (f"\nresult of part 1: {result}")
+
+    fill_optimal_path()
+    result = count_optimal_path()
+    print_grid()
     
-    print (f"\nresult: {result}")
+    print (f"\nresult of aprt 2: {result}")
