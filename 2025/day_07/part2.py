@@ -1,5 +1,3 @@
-from functools import cache
-
 USE_EXAMPLE = False
 FILE = 'example.txt' if USE_EXAMPLE else  'input.txt'
 TEMP_FiLE = 'temp.txt'
@@ -33,7 +31,6 @@ def print_grid():
         print_verbose(''.join(row))
     print_verbose('################')
 
-@cache
 def find_instances(row, col):
     col_limit = len(GRID[0])-1
     for r in range(row+1, len(INSTANCES)):
